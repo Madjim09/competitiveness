@@ -32,8 +32,11 @@ func StartGreets(n int, m float64) chan greetVal {
 		go greet(i, m, ch, &wg)
 	}
 
-	wg.Wait()
-	close(ch)
+	go func() {
+		wg.Wait()
+		close(ch)
+	}()
+
 	return ch
 }
 
