@@ -31,3 +31,11 @@ func StartGreets(n int, m float64) chan greetVal {
 	close(ch)
 	return ch
 }
+
+func ConvChanInSlice(ch chan greetVal) []greetVal {
+	data := make([]greetVal, 0, len(ch))
+	for v := range ch {
+		data = append(data, v)
+	}
+	return data
+}
