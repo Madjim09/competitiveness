@@ -1,7 +1,11 @@
 package works
 
 import (
+	"bufio"
+	"fmt"
+	"os"
 	"sort"
+	"strings"
 	"sync"
 	"time"
 )
@@ -42,4 +46,29 @@ func ConvChanInSlice(ch chan greetVal) []greetVal {
 		return data[i].time < data[j].time
 	})
 	return data
+}
+
+func Output(data []greetVal) {
+	for _, v := range data {
+		fmt.Printf("Горутина номер: %d выполнилась за: %d\n", v.number, v.time)
+	}
+}
+
+func AnswerUserToQuestion() bool {
+	fmt.Print("Хотите продолжить? [y/n]: ")
+	scanner := bufio.NewScanner(os.Stdin)
+	for {
+		scanner.Scan()
+		answer := strings.TrimSpace(strings.ToLower(scanner.Text()))
+		switch answer {
+		case "y", "yes", "да", "д":
+			fmt.Println()
+			return true
+		case "n", "no", "нет", "н":
+			return false
+		default:
+			fmt.Println("Неверный ввод.")
+			fmt.Print("Введите y (да) или n (нет): ")
+		}
+	}
 }
