@@ -29,7 +29,7 @@ func StartGreets(n int, m float64) chan greetVal {
 
 	ch := make(chan greetVal)
 	for i := 0; i < n; i++ {
-		go greet(i, m, ch, &wg)
+		go greet(i+1, m, ch, &wg)
 	}
 
 	go func() {
@@ -46,6 +46,9 @@ func ConvChanInSlice(ch chan greetVal) []greetVal {
 		data = append(data, v)
 	}
 	sort.Slice(data, func(i, j int) bool {
+		if data[i].time == data[j].time {
+			return data[i].number < data[j].number
+		}
 		return data[i].time < data[j].time
 	})
 	return data
@@ -53,7 +56,7 @@ func ConvChanInSlice(ch chan greetVal) []greetVal {
 
 func Output(data []greetVal) {
 	for _, v := range data {
-		fmt.Printf("Горутина номер: %d выполнилась за: %d\n", v.number, v.time)
+		fmt.Printf("Горутина номер: %d выполнилась за %v\n", v.number, v.time)
 	}
 }
 
