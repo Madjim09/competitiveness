@@ -1,6 +1,7 @@
 package works
 
 import (
+	"sort"
 	"sync"
 	"time"
 )
@@ -37,5 +38,8 @@ func ConvChanInSlice(ch chan greetVal) []greetVal {
 	for v := range ch {
 		data = append(data, v)
 	}
+	sort.Slice(data, func(i, j int) bool {
+		return data[i].time < data[j].time
+	})
 	return data
 }
