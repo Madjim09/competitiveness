@@ -5,24 +5,29 @@ import (
 	"time"
 )
 
-func greet(number int, timeSleep float64, wg *sync.WaitGroup) func() (int, time.Duration) {
+type greetVal struct {
+	number int
+	time   time.Duration
+}
+
+func greet(number int, timeSleep float64, ch chan greetVal, wg *sync.WaitGroup) {
 	defer wg.Done()
 	start := time.Now()
 	time.Sleep(time.Duration(timeSleep * float64(time.Second)))
 	end := time.Since(start)
-
-	return func() (int, time.Duration) {
-		return number, end
-	}
+	ch <- greetVal{number, end}
 }
 
-func StartGreets(n int, m float64) {
+func StartGreets(n int, m float64) chan greetVal {
 	var wg sync.WaitGroup
 	wg.Add(n)
 
+	ch := make(chan greetVal)
 	for i := 0; i < n; i++ {
-		go greet(i, m, &wg)
+		go greet(i, m, ch, &wg)
 	}
 
 	wg.Wait()
+	close(ch)
+	return ch
 }
