@@ -16,36 +16,32 @@ type greetVal struct {
 	time   time.Duration
 }
 
-func greet(number int, timeSleep float64, ch chan greetVal, wg *sync.WaitGroup) {
+func greet(number int, timeSleep float64, sl *[]greetVal, wg *sync.WaitGroup) {
 	defer wg.Done()
+	var mu sync.Mutex
 	start := time.Now()
 	time.Sleep(time.Duration(rand.Float64() * timeSleep * float64(time.Second)))
 	end := time.Since(start)
-	ch <- greetVal{number, end}
+	mu.Lock()
+	*sl = append(*sl, greetVal{number, end})
+	mu.Unlock()
 }
 
-func StartGreets(n int, m float64) chan greetVal {
+func StartGreets(n int, m float64) []greetVal {
 	var wg sync.WaitGroup
 	wg.Add(n)
 
-	ch := make(chan greetVal)
+	slData := make([]greetVal, 0, n)
 	for i := 0; i < n; i++ {
-		go greet(i+1, m, ch, &wg)
+		go greet(i+1, m, &slData, &wg)
 	}
 
-	go func() {
-		wg.Wait()
-		close(ch)
-	}()
+	wg.Wait()
 
-	return ch
+	return slData
 }
 
-func ConvChanInSlice(ch chan greetVal) []greetVal {
-	data := make([]greetVal, 0, len(ch))
-	for v := range ch {
-		data = append(data, v)
-	}
+func ConvChanInSlice(data []greetVal) []greetVal {
 	sort.Slice(data, func(i, j int) bool {
 		if data[i].time == data[j].time {
 			return data[i].number < data[j].number

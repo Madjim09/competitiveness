@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 
 	"github.com/Madjim09/competitiveness.git/internal/works"
@@ -21,8 +22,9 @@ func main() {
 			flag = false
 			continue
 		}
-		ch := works.StartGreets(n, m)
-		slice := works.ConvChanInSlice(ch)
+		fmt.Println("Ожидание выполнения горутин...")
+		data := works.StartGreets(n, m)
+		slice := works.ConvChanInSlice(data)
 		works.Output(slice)
 		flag = works.AnswerUserToQuestion()
 	}
