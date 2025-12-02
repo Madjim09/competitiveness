@@ -3,6 +3,7 @@ package works
 import (
 	"bufio"
 	"fmt"
+	"math/rand"
 	"os"
 	"sort"
 	"strings"
@@ -18,7 +19,7 @@ type greetVal struct {
 func greet(number int, timeSleep float64, ch chan greetVal, wg *sync.WaitGroup) {
 	defer wg.Done()
 	start := time.Now()
-	time.Sleep(time.Duration(timeSleep * float64(time.Second)))
+	time.Sleep(time.Duration(rand.Float64() * timeSleep * float64(time.Second)))
 	end := time.Since(start)
 	ch <- greetVal{number, end}
 }
@@ -56,7 +57,7 @@ func ConvChanInSlice(ch chan greetVal) []greetVal {
 
 func Output(data []greetVal) {
 	for _, v := range data {
-		fmt.Printf("Горутина номер: %d выполнилась за %v\n", v.number, v.time)
+		fmt.Printf("Горутина номер: %3d выполнилась за %v\n", v.number, v.time)
 	}
 }
 
